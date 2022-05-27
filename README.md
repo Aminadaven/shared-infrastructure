@@ -34,7 +34,8 @@ Examples and templates to use with new projects regarding docker, gradle and dep
 2. gradle
 3. local_development
 4. workflows
-5. single-files
+5. java
+6. single-files
 
 ### .github/workflows:
 The workflows activated in the repo. 
