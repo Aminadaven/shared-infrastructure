@@ -1,0 +1,24 @@
+plugins {
+    id 'com.google.cloud.tools.jib' version '3.2.1'
+}
+
+jib {
+    from {
+        image = 'docker.io/aminadaven/scratch-jre:min-17'
+        auth {
+            username = $DOCKER_USERNAME
+            password = $DOCKER_PASSWORD
+        }
+    }
+    to {
+        image = "docker.io/$rootProject.name"  // Can replace with any cloud or registry
+        auth {
+            username = $CLOUD_USERNAME
+            password = $CLOUD_PASSWORD
+        }
+        tags = [$version, 'latest']
+    }
+    container {
+        user = 1000
+    }
+}

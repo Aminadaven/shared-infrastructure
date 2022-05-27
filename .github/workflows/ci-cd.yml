@@ -1,0 +1,181 @@
+#### USAGE: Copy examples/workflows/local-pipeline.yml to your project and enjoy the shared pipeline!
+
+name: "Shared CI / CD Pipeline"
+
+on:
+  workflow_call:  # To be used as a shared ci / cd pipeline
+#    secrets:
+#      DOCKER_USERNAME:
+#        required: true
+#      DOCKER_PASSWORD:
+#        required: true
+
+#permissions:
+#  contents: read
+permissions: read-all
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: "Lint"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3.0.2
+        with:
+          persist-credentials: false
+          fetch-depth: '0'
+
+      - name: "Binary Files"
+        run: |
+          DEBUG=${DEBUG:=false}
+          [ $DEBUG = true ] && set -x
+          message=WARNING
+
+          tmp_file=/tmp/bin_tmp.$$
+          white_list=/tmp/bin_white_list.$$
+
+          #Create White List (put permitted binaries here)
+          cat > $white_list << EOF
+          /gradle-wrapper.jar
+          EOF
+
+          [ $DEBUG = true ] && cat $white_list
+
+          echo -n "Project: ${{ github.repository }} - Starting binary files lint"
+
+          #Find all binary files in workspace
+          find "${{ github.workspace }}" ! -path "*.git/*" -name "*" -type f -exec grep -P "[^\x00-\x7F]" {} \; | grep -w Binary | grep -F -v -f $white_list  > $tmp_file || true
+          if [ ! -s $tmp_file ];then
+            echo -e "\nOK"
+            exit 0
+          fi
+
+          echo -e "\n\n${message}!! Repository contains binaries:"
+          #Format and display results
+          cat $tmp_file | sed 's&Binary file&&' | sed 's& matches$&&'
+          exit 1
+        continue-on-error: true
+
+      - name: "Secrets"
+        uses: zricethezav/gitleaks-action@master
+        continue-on-error: true
+
+      - name: "Scan Dockerfile"
+        uses: hadolint/hadolint-action@master
+        id: hadolint
+        with:
+          dockerfile: "Dockerfile"
+          verbose: true
+          failure-threshold: warning
+        continue-on-error: true
+
+      - name: "Dockerfile results"
+        run: |
+          echo #### Hadolint: ${{ steps.hadolint.outcome }}
+          echo ${{ env.HADOLINT_RESULTS }}
+          if [ ${{ steps.hadolint.outcome }} != "success" ];then
+            exit 1
+          fi
+        continue-on-error: true
+
+  build:
+    needs: lint
+    name: "Build"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3.0.2
+        with:
+          persist-credentials: false
+
+      - name: "Validate Gradlew"
+        uses: gradle/wrapper-validation-action@v1.0.4
+
+      - name: "Permit Gradlew"
+        run: chmod +x gradlew
+
+      - name: "Setup JDK"
+        uses: actions/setup-java@v3.3.0
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+
+      - name: "Lint build.gradle"
+        uses: gradle/gradle-build-action@v2.1.6
+        with:
+          arguments: generateGradleLintReport autoLintGradle
+
+      - name: "Build and Test"
+        uses: gradle/gradle-build-action@v2.1.6
+        with:
+          arguments: build --stacktrace
+
+      - name: "Upload Reports"
+        uses: actions/upload-artifact@v3.1.0
+        if: github.event_name == 'push'
+        with:
+          name: reports
+          path: build/reports
+
+      - name: "Cache build products for deployment"
+        uses: actions/cache@v3.0.2
+        if: github.event_name == 'push'
+        with:
+          path: build/extracted
+          key: application-layers
+
+# Test job HERE (integration tests, load tests, security tests)
+
+  deploy:
+    if: github.event_name == 'push'
+    needs: build
+    name: "Deploy"
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3.0.2
+        with:
+          persist-credentials: false
+      - name: Cache
+        uses: actions/cache@v3.0.2
+        with:
+          path: build/extracted
+          key: application-layers
+
+      - name: "Make 'snapshot-dependencies' dir if not exists"
+        run: mkdir -p build/extracted/snapshot-dependencies
+
+      - name: "Log in to Docker Hub"
+        uses: docker/login-action@v2.0.0
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: "🔧 setup buildx"
+        uses: docker/setup-buildx-action@v2.0.0
+
+      - name: "🔧 cache docker layers"
+        uses: actions/cache@v3.0.2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: "🔧 docker meta"
+        id: meta
+        uses: docker/metadata-action@v4.0.1
+        with:
+          images: ${{ github.repository }}
+
+      - name: "Build & Push Docker Image"
+        uses: docker/build-push-action@v3.0.0
+        with:
+          context: .
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          push: true
+          cache-from: type=gha, scope=${{ github.workflow }}
+          cache-to: type=gha, scope=${{ github.workflow }}

@@ -1,0 +1,32 @@
+tasks.register('extractLayers', Exec) {
+    group = 'build'
+    commandLine 'java', '-Djarmode=layertools',
+            '-jar', "${buildDir}/libs/${rootProject.name}-${version}.jar",
+            'extract',
+            '--destination', "${buildDir}/extracted"
+}
+
+tasks.named('assemble') {
+    finalizedBy 'extractLayers'
+}
+
+tasks.register('dockerBuildTag', Exec) {
+    group = 'docker'
+    commandLine 'docker', 'build',
+            '-t', "$rootProject.name:$version",
+            '-t', "$rootProject.name:latest",
+            '.'
+}
+
+tasks.register('dockerBuildImage') {
+    group = 'docker'
+    dependsOn 'assemble'
+    dependsOn 'dockerBuildLayeredTag'
+    tasks.named('dockerBuildTag').get().mustRunAfter 'assemble'
+}
+
+tasks.register('dockerPushImages', Exec) {
+    group = 'docker'
+    commandLine 'docker', 'push', "aminadaven/$rootProject.name:$version"
+    commandLine 'docker', 'push', "aminadaven/$rootProject.name:latest"
+}

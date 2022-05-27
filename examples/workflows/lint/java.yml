@@ -1,0 +1,4 @@
+- name: "Lint Java code with CheckStyle"
+  uses: dbelyaev/action-checkstyle@master
+  with:
+    reporter: github-check

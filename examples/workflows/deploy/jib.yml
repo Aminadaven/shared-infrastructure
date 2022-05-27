@@ -1,0 +1,23 @@
+- name: "🔧 cache jib image layers"
+  uses: actions/cache@v3.0.2
+  with:
+    path: |
+      /tmp/jib
+      /build/jib-cache
+    key: ${{ runner.os }}-jib-${{ github.sha }}
+    restore-keys: |
+      ${{ runner.os }}-jib-
+
+- name: "🔧 docker meta"
+  id: meta
+  uses: docker/metadata-action@v4.0.1
+
+- name: "Jib: Build & Upload OCI Image"
+  uses: gradle/gradle-build-action@v2.1.6
+  with:
+    arguments: jib -Djib.container.labels=${{ steps.meta.outputs.labels }} -Djib.baseImageCache=/tmp/jib
+  env:
+    DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+    DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+    CLOUD_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+    CLOUD_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}

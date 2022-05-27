@@ -1,0 +1,44 @@
+list-files:
+  strategy:
+    max-parallel: 1
+    matrix:
+      dir:
+        - dir1
+        - dir2
+  runs-on: ubuntu-latest
+  continue-on-error: false
+  outputs:
+    paths: ${{ steps.list-files.outputs.paths }}
+  steps:
+    - name: List Files
+      id: list-files
+      uses: mirko-felice/list-files-action@v3.0.1
+      with:
+        repo: ${{ github.repository }}
+        ref: ${{ github.ref }}
+        path: "${{ matrix.dir }}"
+        ext: ".*"
+
+using-files:
+  needs: list-files
+  strategy:
+    max-parallel: 1
+    matrix:
+      paths: ${{ fromJson(needs.list-files.outputs.paths) }}
+      dir:
+        - ${{ matrix.dir }}
+  runs-on: ubuntu-latest
+
+  steps:
+    - name: "parse filename to tag"
+      run: |
+        tag="${{ matrix.paths }}"
+        tag="${tag////-}"
+        tag="${tag/.dockerfile/}"
+        echo $tag
+        echo "tag=$tag" >> $GITHUB_ENV
+      env:
+        matrix.paths: ${{ github.tag }}
+
+    - name: "print result"
+      run: "echo ${{ env.tag }}"

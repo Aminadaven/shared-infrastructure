@@ -1,0 +1,30 @@
+tasks.register('copyDependencies', Copy) {
+    group = 'build'
+    from configurations.default
+    into 'build/dependencies'
+}
+
+tasks.named('classes') {
+    dependsOn 'copyDependencies'
+}
+
+tasks.register('dockerBuildTag', Exec) {
+    group = 'docker'
+    commandLine 'docker', 'build',
+            '-t', "$rootProject.name:$version",
+            '-t', "$rootProject.name:latest",
+            '.'
+}
+
+tasks.register('dockerBuildImage') {
+    group = 'docker'
+    dependsOn 'classes'
+    dependsOn 'dockerBuildTag'
+    tasks.named('dockerBuildTag').get().mustRunAfter 'classes'
+}
+
+tasks.register('dockerPushImages', Exec) {
+    group = 'docker'
+    commandLine 'docker', 'push', "aminadaven/$rootProject.name:$version"
+    commandLine 'docker', 'push', "aminadaven/$rootProject.name:latest"
+}

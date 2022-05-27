@@ -1,0 +1,26 @@
+name: "CI / CD Pipeline"
+
+on:
+  push:
+    tags: [ '**' ]
+    branches:
+      - master
+    paths-ignore:
+      - '*.md'
+      - local_development
+  pull_request:
+    types:
+      - opened
+      - edited
+      - synchronize
+      - reopened
+    paths-ignore:
+      - '*.md'
+      - local_development
+      - .github
+
+jobs:
+  ci_cd:
+    - name: "Call Shared Pipeline"
+      uses: aminadaven/shared-infrastructure/.github/workflows/ci-cd.yml
+      secrets: inherit
