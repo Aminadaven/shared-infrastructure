@@ -1,0 +1,5 @@
+// Used to automatically generate the javadoc for the gradle plugin.
+// To pass Java CheckStyle linting.
+plugins {
+    id 'nebula.project' version '9.6.3'
+}
