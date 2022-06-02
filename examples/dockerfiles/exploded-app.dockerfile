@@ -12,8 +12,8 @@ COPY --chown=$LIMITED_USER:$LIMITED_USER "/build/classes/java/main" "/app"
 # ENTRYPOINT ["java","-cp","/app:/app/dependencies/*", "yourPackage.YourApplication"]
 
 # TODO: check which syntax works, since the base image have ENTRYPOINT ["java"]
-# ENTRYPOINT ["java","-cp","/app:/app/dependencies/*"]
-ENTRYPOINT ["-cp","/app:/app/dependencies/*"]
+ENTRYPOINT ["java","-cp","/app:/app/dependencies/*"]
+# ENTRYPOINT ["-cp","/app:/app/dependencies/*"]
 # with this way we should be able to send the image the main class name at runtime instead of buildtime, 
 # so it is easier to have the same dockerfile in all projects
 CMD ["yourPackage.YourApplication"]
