@@ -203,7 +203,7 @@ jobs:
           images: ${{ github.repository }}
 
       - name: "Build & Push Docker Image"
-        uses: docker/build-push-action@v3.0.0
+        uses: docker/build-push-action@v3.1.1
         with:
           context: .
           tags: ${{ steps.meta.outputs.tags }}
