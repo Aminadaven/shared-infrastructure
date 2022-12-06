@@ -55,4 +55,6 @@ ENV PATH="/lib/runtime/bin:${PATH}" \
 COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /app /app
 WORKDIR /app
 
-CMD ["java", "--version"]
+
+ENTRYPOINT ["java"]
+CMD ["--version"]
