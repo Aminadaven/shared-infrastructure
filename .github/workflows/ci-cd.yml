@@ -198,7 +198,7 @@ jobs:
 
       - name: "🔧 docker meta"
         id: meta
-        uses: docker/metadata-action@v4.0.1
+        uses: docker/metadata-action@v4.1.1
         with:
           images: ${{ github.repository }}
 
