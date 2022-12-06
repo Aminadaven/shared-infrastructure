@@ -32,20 +32,20 @@ COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/share/xml/fontcon
 COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /lib/libuuid.so.1 /lib/libuuid.so.1
 COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /lib/libuuid.so.1.3.0 /lib/libuuid.so.1.3.0
 COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/bin/xmlwf /usr/bin/xmlwf
-COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/lib/libexpat.so.1 /usr/lib/libexpat.so.1
-COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/lib/libexpat.so.1.8.7 /usr/lib/libexpat.so.1.8.7
-COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/lib/libfreetype.so.6 /usr/lib/libfreetype.so.6
-COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/lib/libfreetype.so.6.18.1 /usr/lib/libfreetype.so.6.18.1
-COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/lib/libpng16.so.16 /usr/lib/libpng16.so.16
-COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/lib/libpng16.so.16.37.0 /usr/lib/libpng16.so.16.37.0
-COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/lib/libbz2.so.1 /usr/lib/libbz2.so.1
-COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/lib/libbz2.so.1.0.8 /usr/lib/libbz2.so.1.0.8
-COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/lib/libbrotlicommon.so.1 /usr/lib/libbrotlicommon.so.1
-COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/lib/libbrotlicommon.so.1.0.9 /usr/lib/libbrotlicommon.so.1.0.9
-COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/lib/libbrotlidec.so.1 /usr/lib/libbrotlidec.so.1
-COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/lib/libbrotlidec.so.1.0.9 /usr/lib/libbrotlidec.so.1.0.9
-COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/lib/libbrotlienc.so.1 /usr/lib/libbrotlienc.so.1
-COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/lib/libbrotlienc.so.1.0.9 /usr/lib/libbrotlienc.so.1.0.9
+# COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/lib/libexpat.so.1 /usr/lib/libexpat.so.1
+COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/lib/libexpat.so.* /usr/lib/libexpat.so.*
+# COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/lib/libfreetype.so.6 /usr/lib/libfreetype.so.6
+COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/lib/libfreetype.so.* /usr/lib/libfreetype.so.*
+# COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/lib/libpng16.so.16 /usr/lib/libpng16.so.16
+COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/lib/libpng16.so.* /usr/lib/libpng16.so.*
+# COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/lib/libbz2.so.1 /usr/lib/libbz2.so.1
+COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/lib/libbz2.so.* /usr/lib/libbz2.so.*
+# COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/lib/libbrotlicommon.so.1 /usr/lib/libbrotlicommon.so.1
+COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/lib/libbrotlicommon.so.* /usr/lib/libbrotlicommon.so.*
+# COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/lib/libbrotlidec.so.1 /usr/lib/libbrotlidec.so.1
+COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/lib/libbrotlidec.so.* /usr/lib/libbrotlidec.so.*
+# COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/lib/libbrotlienc.so.1 /usr/lib/libbrotlienc.so.1
+COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/lib/libbrotlienc.so.* /usr/lib/libbrotlienc.so.*
 
 ENV PATH="/lib/runtime/bin:${PATH}" \
  SPRING_JMX_ENABLED=false \
