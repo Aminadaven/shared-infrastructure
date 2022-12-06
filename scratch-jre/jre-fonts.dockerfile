@@ -25,13 +25,13 @@ COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /tmp /tmp
 COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /etc/fonts /etc/fonts
 COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/share/fonts/OTF/overpass-regular.otf /usr/share/fonts/OTF/overpass-regular.otf
 # Minimal libs for fonts
-COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/lib/libfontconfig.so.1 /usr/lib/libfontconfig.so.1
-COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/lib/libfontconfig.so.1.12.0 /usr/lib/libfontconfig.so.1.12.0
+COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/bin/xmlwf /usr/bin/xmlwf
 COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/share/fontconfig /usr/share/fontconfig
 COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/share/xml/fontconfig/fonts.dtd /usr/share/xml/fontconfig/fonts.dtd
-COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /lib/libuuid.so.1 /lib/libuuid.so.1
-COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /lib/libuuid.so.1.3.0 /lib/libuuid.so.1.3.0
-COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/bin/xmlwf /usr/bin/xmlwf
+# COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /lib/libuuid.so.1 /lib/libuuid.so.1
+COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /lib/libuuid.so.* /lib/libuuid.so.*
+# COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/lib/libfontconfig.so.1 /usr/lib/libfontconfig.so.1
+COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/lib/libfontconfig.so.* /usr/lib/libfontconfig.so.*
 # COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/lib/libexpat.so.1 /usr/lib/libexpat.so.1
 COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/lib/libexpat.so.* /usr/lib/libexpat.so.*
 # COPY --from=customjre --chown=$LIMITED_USER:$LIMITED_USER /usr/lib/libfreetype.so.6 /usr/lib/libfreetype.so.6
