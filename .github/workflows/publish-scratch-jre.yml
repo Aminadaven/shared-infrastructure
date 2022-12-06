@@ -38,7 +38,7 @@ jobs:
     needs: docker_lint
     strategy:
       matrix:
-        version: [17, 18]
+#        version: [17, 19]
         size: [min, max]
         file: ["", fonts]
     name: Push Docker image to Docker Hub
@@ -71,6 +71,6 @@ jobs:
           push: true
           file: scratch-jre/jre${{ env.file }}.dockerfile
           build-args: |
-            JAVA_VER: ${{ matrix.version }}
+            JAVA_VER: 17
             JRE_SIZE: ${{ matrix.size }}
           tags: aminadaven/scratch-jre:${{ matrix.size }}-${{ matrix.version }}${{ env.file }}
