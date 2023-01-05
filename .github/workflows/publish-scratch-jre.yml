@@ -16,7 +16,7 @@ jobs:
         file: ["scratch-jre/jre.dockerfile", "scratch-jre/jre-fonts.dockerfile"]
 
     steps:
-      - uses: actions/checkout@v3.1.0
+      - uses: actions/checkout@v3.3.0
 
       - name: "Scan ${{ matrix.file }}"
         uses: hadolint/hadolint-action@master
@@ -47,7 +47,7 @@ jobs:
 
     steps:
       - name: Check out the repo
-        uses: actions/checkout@v3.1.0
+        uses: actions/checkout@v3.3.0
 
       - run: |
           if [ "${{ matrix.file }}" = "" ]
