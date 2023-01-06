@@ -113,7 +113,7 @@ jobs:
           arguments: build --stacktrace
 
       - name: "Upload Reports"
-        uses: actions/upload-artifact@v3.1.1
+        uses: actions/upload-artifact@v3.1.2
         if: github.event_name == 'push'
         with:
           name: reports
