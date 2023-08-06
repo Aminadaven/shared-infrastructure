@@ -103,12 +103,12 @@ jobs:
           distribution: 'zulu'
 
       - name: "Lint build.gradle"
-        uses: gradle/gradle-build-action@v2.3.3
+        uses: gradle/gradle-build-action@v2.4.2
         with:
           arguments: generateGradleLintReport autoLintGradle
 
       - name: "Build and Test"
-        uses: gradle/gradle-build-action@v2.3.3
+        uses: gradle/gradle-build-action@v2.4.2
         with:
           arguments: build --stacktrace
 
